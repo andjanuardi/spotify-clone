@@ -17,7 +17,10 @@ export default function NowPlayingBar() {
   const nextTrack = usePlayerStore((s) => s.nextTrack)
   const setVolume = usePlayerStore((s) => s.setVolume)
 
-  setAudioRef(audioRef)
+  useEffect(() => {
+    setAudioRef(audioRef)
+    return () => setAudioRef(null)
+  }, [])
 
   useEffect(() => {
     const audio = audioRef.current

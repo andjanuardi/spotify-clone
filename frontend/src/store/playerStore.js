@@ -20,6 +20,7 @@ const usePlayerStore = create(
       frequencyData: null,
       favorites: [],
       playlists: [],
+      audioRef: null,
 
       setCurrentTrack: (track) => set({ currentTrack: track }),
       setPlaying: (isPlaying) => set({ isPlaying }),
@@ -116,6 +117,7 @@ const usePlayerStore = create(
 
       setFavorites: (favorites) => set({ favorites }),
       setPlaylists: (playlists) => set({ playlists }),
+      setAudioRef: (ref) => set({ audioRef: ref }),
     }),
     {
       name: 'spotify-clone-storage',
