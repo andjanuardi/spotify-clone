@@ -21,7 +21,7 @@ async def search_youtube(query: str, max_results: int = 10):
                     'video_id': entry.get('id'),
                     'title': entry.get('title', 'Unknown Title'),
                     'artist': entry.get('channel', 'Unknown Artist'),
-                    'thumbnail': entry.get('thumbnail', ''),
+                    'thumbnail': entry.get('thumbnail') or f"https://img.youtube.com/vi/{entry.get('id')}/hqdefault.jpg",
                     'duration': entry.get('duration', 0),
                     'url': f"https://youtube.com/watch?v={entry.get('id')}",
                 })
