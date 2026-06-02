@@ -1,0 +1,39 @@
+import { useState, useCallback } from 'react'
+import { motion } from 'framer-motion'
+
+export default function SearchBar({ onSearch }) {
+  const [query, setQuery] = useState('')
+
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault()
+      if (query.trim()) {
+        onSearch(query.trim())
+      }
+    },
+    [query, onSearch]
+  )
+
+  return (
+    <motion.form
+      className="search-container"
+      onSubmit={handleSubmit}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="11" cy="11" r="8" />
+        <path d="M21 21l-4.35-4.35" />
+      </svg>
+      <input
+        className="search-input"
+        type="text"
+        placeholder="Search for songs, artists..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        autoFocus
+      />
+    </motion.form>
+  )
+}
