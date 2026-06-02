@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import usePlayerStore from '../store/playerStore'
 import { getStreamUrl } from '../api'
@@ -64,12 +64,23 @@ export default function NowPlayingBar() {
     }
   }, [volume])
 
+  const handleCanPlay = useCallback(() => {
+    const audio = audioRef.current
+    if (!audio) return
+    const state = usePlayerStore.getState()
+    if (state.isPlaying) {
+      audio.play().catch(() => state.setPlaying(false))
+    }
+  }, [])
+
   useEffect(() => {
     const audio = audioRef.current
     if (!audio || !currentTrack) return
 
     if (isPlaying) {
-      audio.play().catch(() => setPlaying(false))
+      if (audio.readyState >= 2) {
+        audio.play().catch(() => setPlaying(false))
+      }
     } else {
       audio.pause()
     }
@@ -95,6 +106,7 @@ export default function NowPlayingBar() {
         ref={audioRef}
         src={currentTrack ? getStreamUrl(currentTrack.video_id) : undefined}
         preload="auto"
+        onCanPlay={handleCanPlay}
       />
 
       <AnimatePresence mode="wait">

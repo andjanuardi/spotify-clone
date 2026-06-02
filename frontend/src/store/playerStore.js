@@ -14,10 +14,6 @@ const usePlayerStore = create(
       isShuffled: false,
       repeatMode: 'off',
       showQueue: false,
-      showVisualizer: true,
-      audioContext: null,
-      analyserNode: null,
-      frequencyData: null,
       favorites: [],
       playlists: [],
       audioRef: null,
@@ -29,11 +25,6 @@ const usePlayerStore = create(
       setDuration: (duration) => set({ duration }),
       setShowQueue: (showQueue) => set({ showQueue }),
       toggleShowQueue: () => set((s) => ({ showQueue: !s.showQueue })),
-      toggleVisualizer: () => set((s) => ({ showVisualizer: !s.showVisualizer })),
-
-      setAudioContext: (audioContext) => set({ audioContext }),
-      setAnalyserNode: (analyserNode) => set({ analyserNode }),
-      setFrequencyData: (frequencyData) => set({ frequencyData }),
 
       addToQueue: (track) =>
         set((state) => ({ queue: [...state.queue, track] })),

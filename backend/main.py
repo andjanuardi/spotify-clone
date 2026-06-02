@@ -1,6 +1,6 @@
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -43,18 +43,41 @@ async def info(video_id: str):
 
 
 @app.get("/api/stream/{video_id}")
-async def stream(video_id: str):
+async def stream(video_id: str, request: Request):
     audio_url = await get_audio_url(video_id)
     if not audio_url:
         raise HTTPException(status_code=404, detail="Could not fetch audio stream")
 
-    async def generate():
-        async with httpx.AsyncClient() as client:
-            async with client.stream("GET", audio_url) as resp:
-                async for chunk in resp.aiter_bytes():
-                    yield chunk
+    req_headers = {}
+    range_header = request.headers.get("range")
+    if range_header:
+        req_headers["Range"] = range_header
 
-    return StreamingResponse(generate(), media_type="audio/mp4")
+    client = httpx.AsyncClient()
+    resp = await client.send(
+        client.build_request("GET", audio_url, headers=req_headers),
+        stream=True,
+    )
+
+    resp_headers = {}
+    for h in ["content-range", "content-length", "accept-ranges", "content-type"]:
+        v = resp.headers.get(h)
+        if v:
+            resp_headers[h] = v
+
+    async def generate():
+        try:
+            async for chunk in resp.aiter_bytes():
+                yield chunk
+        finally:
+            await resp.aclose()
+            await client.aclose()
+
+    return StreamingResponse(
+        generate(),
+        status_code=resp.status_code,
+        headers=resp_headers,
+    )
 
 
 @app.get("/api/favorites")

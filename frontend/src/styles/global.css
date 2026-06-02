@@ -825,28 +825,6 @@ img {
   color: var(--accent);
 }
 
-.visualizer-toggle {
-  position: fixed;
-  bottom: calc(var(--nowplaying-height) + 12px);
-  right: 20px;
-  z-index: 90;
-  padding: 8px 14px;
-  background: var(--bg-surface);
-  border-radius: 20px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s;
-  border: 1px solid var(--bg-elevated);
-}
-
-.visualizer-toggle:hover {
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-}
-
 .favorites-page,
 .playlists-page {
   display: flex;

@@ -128,15 +128,7 @@ export default function SongCard({ song, compact }) {
         src={song.thumbnail || ''}
         alt={song.title}
         onError={(e) => {
-          const parent = e.target.parentElement
-          if (!parent) return
           e.target.style.display = 'none'
-          parent.style.background = 'var(--accent-gradient)'
-          parent.style.display = 'flex'
-          parent.style.alignItems = 'center'
-          parent.style.justifyContent = 'center'
-          parent.textContent = '♪'
-          parent.style.fontSize = '48px'
         }}
       />
       <div className="song-card-title">{song.title}</div>
