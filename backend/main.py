@@ -9,6 +9,7 @@ from database import init_db, get_db
 
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'dist')
 from scraper import search_youtube, get_audio_url, get_video_info
+from trending import get_trending
 
 
 @asynccontextmanager
@@ -26,6 +27,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/api/trending")
+async def trending():
+    results = await get_trending()
+    return {"results": results}
 
 
 @app.get("/api/search")

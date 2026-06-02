@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import SongCard from '../components/SongCard'
-import { search, getFavorites, getPlaylists } from '../api'
+import { getTrending, getFavorites, getPlaylists } from '../api'
 import usePlayerStore from '../store/playerStore'
 
 export default function Home() {
@@ -13,10 +13,8 @@ export default function Home() {
   const setFavorites = usePlayerStore((s) => s.setFavorites)
   const setPlaylists = usePlayerStore((s) => s.setPlaylists)
 
-  const suggestionsQuery = 'indonesia trending music 2024'
-
   useEffect(() => {
-    search(suggestionsQuery, 6)
+    getTrending()
       .then((d) => setSuggestions(d.results))
       .catch(() => {})
       .finally(() => setLoading(false))

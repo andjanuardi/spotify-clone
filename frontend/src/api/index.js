@@ -12,6 +12,8 @@ async function fetchJSON(url, options = {}) {
   return res.json()
 }
 
+export const getTrending = () => fetchJSON(`${BASE}/trending`)
+
 export const search = (query, max = 10) =>
   fetchJSON(`${BASE}/search?q=${encodeURIComponent(query)}&max=${max}`)
 

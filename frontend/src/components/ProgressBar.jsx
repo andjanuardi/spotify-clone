@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useState, useEffect } from 'react'
 import usePlayerStore from '../store/playerStore'
 
 function formatTime(seconds) {
@@ -13,8 +13,24 @@ export default function ProgressBar() {
   const duration = usePlayerStore((s) => s.duration)
   const audioRef = usePlayerStore((s) => s.audioRef)
   const barRef = useRef(null)
+  const [buffered, setBuffered] = useState(0)
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0
+
+  useEffect(() => {
+    const audio = audioRef?.current
+    if (!audio) return
+
+    const onProgress = () => {
+      if (audio.buffered.length > 0) {
+        const end = audio.buffered.end(audio.buffered.length - 1)
+        setBuffered(audio.duration > 0 ? (end / audio.duration) * 100 : 0)
+      }
+    }
+
+    audio.addEventListener('progress', onProgress)
+    return () => audio.removeEventListener('progress', onProgress)
+  }, [audioRef])
 
   const handleSeek = useCallback(
     (e) => {
@@ -35,6 +51,7 @@ export default function ProgressBar() {
         className="progress-bar"
         onClick={handleSeek}
       >
+        <div className="progress-buffer" style={{ width: `${buffered}%` }} />
         <div className="progress-fill" style={{ width: `${progress}%` }} />
       </div>
       <span className="progress-time">{formatTime(duration)}</span>
