@@ -32,14 +32,18 @@ const navItems = [
   },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ mobileMenuOpen, onClose }) {
   const playlists = usePlayerStore((s) => s.playlists)
+
+  const handleNavClick = () => {
+    if (onClose) onClose()
+  }
 
   return (
     <motion.aside
-      className="sidebar"
-      initial={{ x: -240 }}
-      animate={{ x: 0 }}
+      className={`sidebar${mobileMenuOpen ? ' open' : ''}`}
+      initial={mobileMenuOpen !== undefined ? false : { x: -240 }}
+      animate={mobileMenuOpen !== undefined ? {} : { x: 0 }}
       transition={{ type: 'spring', stiffness: 200, damping: 25 }}
     >
       <div className="sidebar-logo">
@@ -55,6 +59,7 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `sidebar-nav-item${isActive ? ' active' : ''}`
             }
+            onClick={handleNavClick}
           >
             {item.icon}
             <span>{item.label}</span>
@@ -83,6 +88,7 @@ export default function Sidebar() {
               className={({ isActive }) =>
                 `sidebar-playlist-item${isActive ? ' active' : ''}`
               }
+              onClick={handleNavClick}
             >
               <svg
                 width="18"
