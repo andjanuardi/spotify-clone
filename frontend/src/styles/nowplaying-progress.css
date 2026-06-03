@@ -1,0 +1,170 @@
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.progress-time {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+}
+
+.progress-time:last-child {
+  text-align: right;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: height 0.15s;
+}
+
+.progress-bar:hover {
+  height: 6px;
+}
+
+.progress-buffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--bg-highlight);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent-gradient);
+  border-radius: 2px;
+  position: relative;
+  transition: width 0.1s linear;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.progress-bar:hover .progress-fill::after {
+  opacity: 1;
+}
+
+.nowplaying-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.volume-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.volume-btn:hover {
+  color: var(--text-primary);
+}
+
+.volume-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.volume-slider {
+  width: 100px;
+  height: 4px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.volume-fill {
+  height: 100%;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: width 0.15s;
+}
+
+.volume-slider:hover .volume-fill {
+  background: var(--accent);
+}
+
+.btn-icon {
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  color: var(--text-primary);
+}
+
+.btn-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 768px) {
+  .nowplaying-right {
+    margin-left: auto;
+  }
+
+  .nowplaying-right .volume-slider {
+    display: none;
+  }
+
+  .nowplaying-right .btn-icon {
+    display: none;
+  }
+
+  .nowplaying-right .volume-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .nowplaying-right .volume-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .progress-container {
+    gap: 4px;
+  }
+
+  .progress-time {
+    font-size: 10px;
+    min-width: 32px;
+  }
+}

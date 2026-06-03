@@ -1,0 +1,136 @@
+.song-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.song-card:hover {
+  background: var(--bg-elevated);
+  transform: translateY(-2px);
+}
+
+.song-card-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  margin-bottom: 12px;
+  background: var(--bg-elevated);
+}
+
+.song-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-card-artist {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-card-play {
+  position: absolute;
+  right: 20px;
+  bottom: 80px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.song-card:hover .song-card-play {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.song-card-play svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.song-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.song-row:hover {
+  background: var(--bg-surface);
+}
+
+.song-row-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--bg-elevated);
+}
+
+.song-row-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.song-row-title {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-row-artist {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.song-row-duration {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.song-row-actions {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.song-row:hover .song-row-actions {
+  opacity: 1;
+}
+
+.song-row-actions button {
+  padding: 6px;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.song-row-actions button:hover {
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+}

@@ -1,0 +1,52 @@
+.queue-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 360px;
+  height: calc(100vh - var(--nowplaying-height));
+  background: var(--bg-surface);
+  border-left: 1px solid var(--bg-elevated);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.queue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid var(--bg-elevated);
+}
+
+.queue-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.queue-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-tertiary);
+  gap: 12px;
+}
+
+.empty-state svg {
+  width: 48px;
+  height: 48px;
+  opacity: 0.5;
+}
+
+.empty-state-text {
+  font-size: 14px;
+}
