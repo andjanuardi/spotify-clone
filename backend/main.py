@@ -5,7 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 import httpx
-from database import init_db, get_db
+from database import init_db
+from routes.favorites import router as favorites_router
+from routes.playlists import router as playlists_router
 
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'dist')
 from scraper import search_youtube, get_audio_url, get_video_info
@@ -27,6 +29,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(favorites_router, prefix="/api")
+app.include_router(playlists_router, prefix="/api")
 
 
 @app.get("/api/trending")
@@ -85,144 +90,6 @@ async def stream(video_id: str, request: Request):
         status_code=resp.status_code,
         headers=resp_headers,
     )
-
-
-@app.get("/api/favorites")
-def get_favorites():
-    db = get_db()
-    rows = db.execute(
-        "SELECT * FROM favorites ORDER BY added_at DESC"
-    ).fetchall()
-    db.close()
-    return {"favorites": [dict(r) for r in rows]}
-
-
-@app.post("/api/favorites")
-def add_favorite(data: dict):
-    db = get_db()
-    try:
-        db.execute(
-            """INSERT OR REPLACE INTO favorites
-               (video_id, title, artist, thumbnail, duration)
-               VALUES (?, ?, ?, ?, ?)""",
-            (
-                data["video_id"],
-                data["title"],
-                data.get("artist", "Unknown"),
-                data.get("thumbnail", ""),
-                data.get("duration", 0),
-            ),
-        )
-        db.commit()
-        return {"status": "ok"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    finally:
-        db.close()
-
-
-@app.delete("/api/favorites/{video_id}")
-def remove_favorite(video_id: str):
-    db = get_db()
-    db.execute("DELETE FROM favorites WHERE video_id = ?", (video_id,))
-    db.commit()
-    db.close()
-    return {"status": "ok"}
-
-
-@app.get("/api/playlists")
-def get_playlists():
-    db = get_db()
-    playlists = db.execute("SELECT * FROM playlists ORDER BY created_at DESC").fetchall()
-    result = []
-    for pl in playlists:
-        pl_dict = dict(pl)
-        song_count = db.execute(
-            "SELECT COUNT(*) as count FROM playlist_songs WHERE playlist_id = ?",
-            (pl["id"],),
-        ).fetchone()["count"]
-        pl_dict["song_count"] = song_count
-        result.append(pl_dict)
-    db.close()
-    return {"playlists": result}
-
-
-@app.post("/api/playlists")
-def create_playlist(data: dict):
-    db = get_db()
-    try:
-        cur = db.execute(
-            "INSERT INTO playlists (name, description) VALUES (?, ?)",
-            (data["name"], data.get("description", "")),
-        )
-        db.commit()
-        return {"id": cur.lastrowid, "name": data["name"]}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    finally:
-        db.close()
-
-
-@app.delete("/api/playlists/{playlist_id}")
-def delete_playlist(playlist_id: int):
-    db = get_db()
-    db.execute("DELETE FROM playlists WHERE id = ?", (playlist_id,))
-    db.commit()
-    db.close()
-    return {"status": "ok"}
-
-
-@app.get("/api/playlists/{playlist_id}/songs")
-def get_playlist_songs(playlist_id: int):
-    db = get_db()
-    rows = db.execute(
-        "SELECT * FROM playlist_songs WHERE playlist_id = ? ORDER BY position",
-        (playlist_id,),
-    ).fetchall()
-    db.close()
-    return {"songs": [dict(r) for r in rows]}
-
-
-@app.post("/api/playlists/{playlist_id}/songs")
-def add_song_to_playlist(playlist_id: int, data: dict):
-    db = get_db()
-    try:
-        max_pos = db.execute(
-            "SELECT COALESCE(MAX(position), -1) as m FROM playlist_songs WHERE playlist_id = ?",
-            (playlist_id,),
-        ).fetchone()["m"]
-        db.execute(
-            """INSERT INTO playlist_songs
-               (playlist_id, video_id, title, artist, thumbnail, duration, position)
-               VALUES (?, ?, ?, ?, ?, ?, ?)""",
-            (
-                playlist_id,
-                data["video_id"],
-                data["title"],
-                data.get("artist", "Unknown"),
-                data.get("thumbnail", ""),
-                data.get("duration", 0),
-                max_pos + 1,
-            ),
-        )
-        db.commit()
-        return {"status": "ok"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    finally:
-        db.close()
-
-
-@app.delete("/api/playlists/{playlist_id}/songs/{song_id}")
-def remove_song_from_playlist(playlist_id: int, song_id: int):
-    db = get_db()
-    db.execute(
-        "DELETE FROM playlist_songs WHERE id = ? AND playlist_id = ?",
-        (song_id, playlist_id),
-    )
-    db.commit()
-    db.close()
-    return {"status": "ok"}
 
 
 if os.path.exists(FRONTEND_DIR) and os.path.isdir(FRONTEND_DIR):
