@@ -617,7 +617,6 @@ img {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 180px;
   justify-content: flex-end;
 }
 
@@ -944,7 +943,6 @@ img {
 
   .nowplaying-bar {
     left: 0;
-    height: 64px;
     padding: 0;
     flex-direction: row;
   }
@@ -982,12 +980,12 @@ img {
     display: flex;
     width: 52px;
     height: 72px;
-    margin-top: -8px;
+    margin-left: 10px;
     border-radius: 6px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     flex-shrink: 0;
-    align-self: flex-start;
+    align-self: center;
   }
 
   .nowplaying-cover img {
@@ -1087,7 +1085,7 @@ img {
   .main-content-inner {
     padding: 16px;
     padding-top: 56px;
-    padding-bottom: calc(64px + 20px);
+    padding-bottom: calc(var(--nowplaying-height) + 20px);
   }
 
   .search-results,
