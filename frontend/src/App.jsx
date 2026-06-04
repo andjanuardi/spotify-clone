@@ -4,6 +4,7 @@ import { lazy, Suspense, useEffect, useState } from 'react'
 import Sidebar from './components/Sidebar'
 import NowPlayingBar from './components/NowPlayingBar'
 import QueueDrawer from './components/QueueDrawer'
+import Toast from './components/Toast'
 import usePlayerStore from './store/playerStore'
 import * as api from './api'
 
@@ -64,6 +65,7 @@ export default function App() {
       </div>
       <NowPlayingBar />
       {showQueue && <QueueDrawer />}
+      <Toast />
     </div>
   )
 }

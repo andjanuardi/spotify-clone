@@ -1,12 +1,17 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import usePlayerStore from '../store/playerStore'
+import useToastStore from '../store/toastStore'
 import * as api from '../api'
 
 export default function SongCard({ song, compact }) {
   const playTrack = usePlayerStore((s) => s.playTrack)
+  const addToQueue = usePlayerStore((s) => s.addToQueue)
   const favorites = usePlayerStore((s) => s.favorites)
   const playlists = usePlayerStore((s) => s.playlists)
   const setFavorites = usePlayerStore((s) => s.setFavorites)
+  const [showPlaylistMenu, setShowPlaylistMenu] = useState(false)
+  const showToast = useToastStore((s) => s.showToast)
 
   const isFav = favorites.some((f) => f.video_id === song.video_id)
   const durationStr = song.duration
@@ -30,9 +35,10 @@ export default function SongCard({ song, compact }) {
     }
   }
 
-  const addToPlaylist = (e, playlistId) => {
+  const addToPlaylist = (e, playlistId, playlistName) => {
     e.stopPropagation()
     api.addSongToPlaylist(playlistId, song).catch(console.error)
+    showToast(`Ditambahkan ke ${playlistName}`)
   }
 
   if (compact) {
@@ -93,7 +99,7 @@ export default function SongCard({ song, compact }) {
                 {playlists.map((pl) => (
                   <div
                     key={pl.id}
-                    onClick={(e) => addToPlaylist(e, pl.id)}
+                    onClick={(e) => addToPlaylist(e, pl.id, pl.name)}
                     style={{
                       padding: '6px 12px',
                       fontSize: 13,
@@ -133,6 +139,72 @@ export default function SongCard({ song, compact }) {
       />
       <div className="song-card-title">{song.title}</div>
       <div className="song-card-artist">{song.artist}</div>
+      <div className="song-card-actions">
+        <button
+          className="song-card-action-btn"
+          onClick={(e) => {
+            e.stopPropagation()
+            addToQueue(song)
+            showToast('Ditambahkan ke antrian')
+          }}
+          title="Add to queue"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+          </svg>
+        </button>
+        <div style={{ position: 'relative', display: 'inline-block' }}>
+          <button
+            className="song-card-action-btn"
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowPlaylistMenu((v) => !v)
+            }}
+            title="Add to playlist"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14m-7-7h14" />
+            </svg>
+          </button>
+          {showPlaylistMenu && playlists.length > 0 && (
+            <div
+              style={{
+                position: 'absolute',
+                left: 0,
+                bottom: '100%',
+                background: 'var(--bg-elevated)',
+                borderRadius: 'var(--radius-md)',
+                padding: 4,
+                zIndex: 50,
+                minWidth: 140,
+                marginBottom: 4,
+              }}
+            >
+              {playlists.map((pl) => (
+                <div
+                  key={pl.id}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    api.addSongToPlaylist(pl.id, song).catch(console.error)
+                    setShowPlaylistMenu(false)
+                    showToast(`Ditambahkan ke ${pl.name}`)
+                  }}
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: 13,
+                    cursor: 'pointer',
+                    borderRadius: 4,
+                  }}
+                  onMouseEnter={(e) => (e.target.style.background = 'var(--bg-highlight)')}
+                  onMouseLeave={(e) => (e.target.style.background = 'transparent')}
+                >
+                  {pl.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
       <motion.div
         className="song-card-play"
         whileHover={{ scale: 1.1 }}
